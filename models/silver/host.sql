@@ -2,12 +2,12 @@
     Silver model: host
 
     Purpose:
-    - Decompose host-related attributes from the Silver Airbnb listings model.
-    - Produce one host record per scrape date.
-    - Prepare the host entity for later SCD Type 2 snapshotting.
+    - Decompose host-related attributes from Airbnb listings.
+    - Preserve each observed host state by scrape date.
+    - Prepare the host entity for SCD Type 2 snapshotting.
 
-    A host can own multiple listings, so the source dataset may contain
-    repeated host information for the same scrape date.
+    A host can own multiple listings. DISTINCT prevents duplicate
+    host versions within the same scrape period.
 */
 
 select distinct
