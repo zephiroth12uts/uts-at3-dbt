@@ -3,20 +3,34 @@
 
     Purpose:
     - Decompose host-related attributes from Airbnb listings.
-    - Return the most recently observed version of each host.
+    - Return exactly one current record per host.
     - Prepare the host entity for SCD Type 2 snapshotting.
 
-    The Airbnb dataset is loaded month by month. For each host, only the
-    latest available record is exposed by this model. The scraped_date
-    column acts as the timestamp used by dbt snapshots to detect newer
-    versions of the same host.
+    A monthly Airbnb extract may contain several scrape dates because
+    individual listings can be scraped on different days.
 
-    A host may own multiple listings within the same scrape. ROW_NUMBER
-    ensures that only one current record per host is presented to the
-    snapshot process.
+    For snapshot purposes, each host must appear only once in the current
+    source state. The most recently observed host record is therefore
+    selected using scraped_date.
 */
 
-with ranked_hosts as (
+with host_observations as (
+
+    select distinct
+        host_id,
+        scraped_date,
+        host_name,
+        host_since,
+        host_is_superhost,
+        host_neighbourhood
+
+    from {{ ref('airbnb_listings') }}
+
+    where host_id is not null
+
+),
+
+ranked_hosts as (
 
     select
         host_id,
@@ -31,9 +45,7 @@ with ranked_hosts as (
             order by scraped_date desc
         ) as row_num
 
-    from {{ ref('airbnb_listings') }}
-
-    where host_id is not null
+    from host_observations
 
 )
 
