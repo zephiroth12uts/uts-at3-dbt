@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: bronze
+    description: Raw source tables loaded into PostgreSQL by Airflow.
+
+    tables:
+      - name: airbnb_listings
+        description: Raw monthly Airbnb listings data.
+
+      - name: census_g01
+        description: 2016 Census G01 selected person characteristics by sex.
+
+      - name: census_g02
+        description: 2016 Census G02 selected medians and averages.
+
+      - name: nsw_lga_code
+        description: Mapping between NSW LGA codes and LGA names.
+
+      - name: nsw_lga_suburb
+        description: Mapping between NSW suburbs and their corresponding LGAs.
